@@ -33,9 +33,9 @@ function filterFoodsFn(items, filters) {
       const isValidForCourse =
         isValid && item.course !== -1 && regex.test(item.course);
 
-      // check for state or city
-      const isValidForCity =
-        isValid && item.city !== -1 && regex.test(item.city);
+      // check for state or region
+      const isValidForRegion =
+        isValid && item.region !== -1 && regex.test(item.region);
       const isValidForState =
         isValid && item.state !== -1 && regex.test(item.state);
 
@@ -43,7 +43,7 @@ function filterFoodsFn(items, filters) {
         isValidForName ||
         isValidForIngredient ||
         isValidForCourse ||
-        isValidForCity ||
+        isValidForRegion ||
         isValidForState;
     }
     return isValid;
@@ -88,4 +88,36 @@ export const getItems = async (req, res) => {
     console.log(err);
     res.send("something went wrong");
   }
+};
+
+export const getItem = async (req, res) => {
+  try {
+    const { foodId } = req.params;
+    if (foodId === undefined) {
+      res.statusCode = 400;
+      throw new Error("foodId required");
+    }
+
+    const food = foods().find((eachFood) => eachFood.id === +foodId);
+    return res.status(200).json({
+      data: food || {},
+      success: true,
+    });
+  } catch (error) {
+    if (!res.statusCode) {
+      res.statusCode = 500;
+    }
+    res.json({
+      message: error.message || "Something went wrong",
+      success: false,
+    });
+  }
+};
+
+const foods = () => {
+  const dataPath = path.join(process.cwd(), "seed-data.json");
+  const seedData = fs.readFileSync(dataPath, "utf-8");
+  const { indian_food } = JSON.parse(seedData);
+
+  return indian_food;
 };

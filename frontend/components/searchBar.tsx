@@ -3,7 +3,7 @@ import React, { useCallback, useState } from "react";
 import axios from "@/utils/getServerAxios";
 import { debounce } from "@/utils/debounce";
 import { capitalizeFirstCharacter } from "@/utils/capitalizeFirstCharacter";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 export const SearchBar: React.FC = () => {
   const router = useRouter();
@@ -63,7 +63,7 @@ export const SearchBar: React.FC = () => {
             {foods.map((food) => (
               <li
                 key={food.name}
-                // onClick={() => handleResultClick(food.id)}
+                onClick={() => handleResultClick(food.id)}
                 className="cursor-pointer p-2 hover:bg-purple-200 transition-colors duration-200 text-black "
               >
                 {capitalizeFirstCharacter(food.name)}
