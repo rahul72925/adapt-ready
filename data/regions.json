@@ -1,0 +1,11 @@
+{
+  "regions": [
+    "East",
+    "West",
+    "North",
+    "North East",
+    "South",
+    "Central",
+    null
+  ]
+}
