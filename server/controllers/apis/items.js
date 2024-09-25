@@ -59,6 +59,8 @@ export const getItems = async (req, res) => {
       flavor_profile,
       diet,
       search,
+      sortBy,
+      orderBy,
     } = req.query;
 
     const dataPath = path.join(process.cwd(), "seed-data.json");
@@ -73,8 +75,22 @@ export const getItems = async (req, res) => {
       diet,
       search,
     });
+    if (orderBy && sortBy) {
+      const numericKeys = ["cook_time", "prep_time"];
+      filteredFoods = filteredFoods.sort((a, b) => {
+        if (numericKeys.includes(sortBy)) {
+          return orderBy === "ascend"
+            ? a[sortBy] - b[sortBy]
+            : b[sortBy] - a[sortBy];
+        } else {
+          return orderBy === "ascend"
+            ? a[sortBy].localeCompare(b[sortBy])
+            : b[sortBy].localeCompare(a[sortBy]);
+        }
+      });
+    }
 
-    let limitedFood = filteredFoods.slice(offset, offset + limit);
+    let limitedFood = filteredFoods.slice(+offset, +offset + +limit);
 
     res.json({
       data: limitedFood,
