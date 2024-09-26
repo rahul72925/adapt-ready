@@ -44,7 +44,7 @@ export const SearchBar: React.FC = () => {
   };
 
   return (
-    <div className="relative">
+    <div className="relative w-full">
       <input
         type="text"
         placeholder="search food, city, ingredient..."
@@ -52,7 +52,7 @@ export const SearchBar: React.FC = () => {
         onChange={handleSearchInputChange}
         className="w-full p-2 rounded-lg bg-gray-100 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-500 transition duration-300 ease-in-out border border-gray-300 shadow-sm text-black font-medium	"
       />
-      <div className="absolute w-full">
+      <div className="absolute w-full z-40">
         {foodFetchStatus === "LOADING" && <InfoText text="Loading..." />}
         {foodFetchStatus === "ERROR" && (
           <InfoText text={"Something went wrong"} />

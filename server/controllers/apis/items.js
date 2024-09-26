@@ -137,3 +137,50 @@ const foods = () => {
 
   return indian_food;
 };
+
+export const suggestItem = async (req, res) => {
+  try {
+    const { ingredients, partialInclude = true } = req.query;
+    // partialInclude:true all food can contain one or more ingredients
+    // partialInclude:false all food strictly contain all ingredients
+
+    if (ingredients === undefined) {
+      res.statusCode = 400;
+      throw new Error("ingredients parameter required");
+    }
+
+    const parseIngredients = ingredients.split(",");
+    const filteredFoods = foods().filter((eachFood) => {
+      const regexArr = parseIngredients.map((each) => new RegExp(each, "i"));
+      let isValid = false;
+      if (partialInclude) {
+        regexArr.forEach(
+          (eachRegex) =>
+            (isValid = isValid || eachRegex.test(eachFood.ingredients))
+        );
+      } else {
+        regexArr.forEach(
+          (eachRegex) =>
+            (isValid = isValid && eachRegex.test(eachFood.ingredients))
+        );
+      }
+
+      return isValid;
+    });
+
+    const limitedKeysFoods = filteredFoods.map(({ id, name, ingredients }) => ({
+      id,
+      name,
+      ingredients,
+    }));
+    res.status(200).json({
+      data: limitedKeysFoods,
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      success: false,
+      message: err,
+    });
+  }
+};
