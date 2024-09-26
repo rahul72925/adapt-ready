@@ -1,5 +1,6 @@
 import { capitalizeFirstCharacter } from "@/utils/capitalizeFirstCharacter";
 import axios from "../../../utils/getServerAxios";
+import classNames from "classnames";
 
 export default async function FoodPage({
   params: { foodId },
@@ -19,7 +20,15 @@ export default async function FoodPage({
   } = food;
   return (
     <div className="h-screen flex justify-center items-center p-4">
-      <div className="max-w-sm rounded overflow-hidden shadow-lg bg-white">
+      <div
+        className={classNames(
+          "max-w-sm rounded overflow-hidden shadow-lg bg-white border-t-4",
+          {
+            "border-red-600": diet === "non vegetarian",
+            "border-green-600": diet === "vegetarian",
+          }
+        )}
+      >
         <div className="px-6 py-4">
           <div className="font-bold text-xl mb-2 text-black">
             {capitalizeFirstCharacter(name)}
