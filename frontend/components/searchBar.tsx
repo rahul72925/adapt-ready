@@ -4,12 +4,14 @@ import axios from "@/utils/getServerAxios";
 import { debounce } from "@/utils/debounce";
 import { capitalizeFirstCharacter } from "@/utils/capitalizeFirstCharacter";
 import { useRouter } from "next/navigation";
+import useOutsideClick from "@/utils/useOutsideClick";
 
 export const SearchBar: React.FC = () => {
   const router = useRouter();
   const [searchText, setSearchText] = useState<string>("");
   const [foodFetchStatus, setFoodFetchStatus] = useState<string>("IDLE");
   const [foods, setFoods] = useState<any[]>([]);
+  const [isListOpen, setIsListOpen] = useState<boolean>(false);
 
   const fetchData = async (query: string) => {
     if (!query) {
@@ -34,17 +36,25 @@ export const SearchBar: React.FC = () => {
   const debouncedFetch = useCallback(debounce(fetchData, 500), []);
 
   const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIsListOpen(true);
     const value = e.target.value;
     setSearchText(value);
     debouncedFetch(value); // Call the debounced function
   };
 
   const handleResultClick = (id: number) => {
+    hideList();
     router.push(`/food/${id}`);
   };
 
+  const hideList = () => {
+    setIsListOpen(false);
+  };
+
+  const outsideRef = useOutsideClick(hideList);
+
   return (
-    <div className="relative w-full">
+    <div className="relative w-full" ref={outsideRef}>
       <input
         type="text"
         placeholder="search food, city, ingredient..."
@@ -58,7 +68,7 @@ export const SearchBar: React.FC = () => {
           <InfoText text={"Something went wrong"} />
         )}
 
-        {foods.length > 0 && (
+        {foods.length > 0 && isListOpen && (
           <ul className="mt-2 bg-white border border-gray-300 rounded-lg shadow-md w-full">
             {foods.map((food) => (
               <li
