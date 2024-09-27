@@ -2,51 +2,45 @@ import fs from "node:fs";
 import path from "node:path";
 
 function filterFoodsFn(items, filters) {
+  const {
+    price: { gte, lte } = {},
+    flavor_profile,
+    search,
+    diet,
+    name,
+    state,
+  } = filters;
+
+  const regexMatch = (value, pattern) =>
+    pattern ? new RegExp(pattern, "i").test(value) : true;
+
   return items.filter((item) => {
-    const { price, flavor_profile, search, diet } = filters;
-    const { gte, lte } = price || {};
-    let isValid = true;
-    if (gte !== undefined) isValid = isValid && item.price >= gte;
-    if (lte !== undefined) isValid = isValid && item.price <= lte;
-    if (flavor_profile !== undefined)
-      isValid =
-        isValid &&
-        item.flavor_profile !== -1 &&
-        item.flavor_profile.toLowerCase() === flavor_profile.toLowerCase();
-    if (diet !== undefined)
-      isValid =
-        isValid &&
-        item.diet !== -1 &&
-        item.diet.toLowerCase() === diet.toLowerCase();
+    // Check price range
+    if (gte !== undefined && item.price < gte) return false;
+    if (lte !== undefined && item.price > lte) return false;
 
-    if (search !== undefined) {
-      const regex = new RegExp(search, "i");
-      // check for name
-      const isValidForName =
-        isValid && item.name !== -1 && regex.test(item.name);
+    // Check individual filters
+    if (!regexMatch(item.flavor_profile, flavor_profile)) return false;
+    if (!regexMatch(item.name, name)) return false;
+    if (!regexMatch(item.state, state)) return false;
+    if (diet && item.diet?.toLowerCase() !== diet.toLowerCase()) return false;
 
-      // check for ingredient
-      const isValidForIngredient =
-        isValid && item.ingredients !== -1 && regex.test(item.ingredients);
-
-      // course
-      const isValidForCourse =
-        isValid && item.course !== -1 && regex.test(item.course);
-
-      // check for state or region
-      const isValidForRegion =
-        isValid && item.region !== -1 && regex.test(item.region);
-      const isValidForState =
-        isValid && item.state !== -1 && regex.test(item.state);
-
-      isValid =
-        isValidForName ||
-        isValidForIngredient ||
-        isValidForCourse ||
-        isValidForRegion ||
-        isValidForState;
+    // Handle search query across multiple fields
+    if (search) {
+      const searchFields = [
+        item.name,
+        item.ingredients,
+        item.course,
+        item.region,
+        item.state,
+      ];
+      const matchesSearch = searchFields.some((field) =>
+        regexMatch(field, search)
+      );
+      return matchesSearch;
     }
-    return isValid;
+
+    return true;
   });
 }
 
@@ -61,6 +55,8 @@ export const getItems = async (req, res) => {
       search,
       sortBy,
       orderBy,
+      name,
+      state,
     } = req.query;
 
     const dataPath = path.join(process.cwd(), "seed-data.json");
@@ -74,6 +70,8 @@ export const getItems = async (req, res) => {
       flavor_profile,
       diet,
       search,
+      name,
+      state,
     });
     if (orderBy && sortBy) {
       const numericKeys = ["cook_time", "prep_time"];

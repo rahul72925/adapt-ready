@@ -8,7 +8,7 @@ export const Header: React.FC = () => {
       <div className="hidden md:block md:flex-grow lg:flex-grow-0">
         <a href="/">
           <img
-            src="https://pixabay.com/get/g581c0cf20f92a504bde4a6b71fc31fb501a16af9b6ed2e35b31991f7efad20a9808673197f6148e10fd97cbc9c2802f7503952781d666b103366b9131048cacafca874133fc68841a6b68b3168164bf5_640.png"
+            src="https://images.unsplash.com/photo-1541980294979-572cb9d973fd?q=80&w=3192&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
             width={40}
             height={40}
           />
