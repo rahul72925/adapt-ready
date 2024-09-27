@@ -1,9 +1,10 @@
 {
-  "name": "adapt-ready",
+  "name": "explore-indian-cuisine",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "concurrently \"nodemon index.js\" \"cd ./frontend && npm run dev\""
+    "start": "concurrently \"nodemon index.js\" \"cd ./frontend && npm run dev\"",
+    "install:packages": "concurrently \"npm install\" \"cd ./frontend && npm install\""
   },
   "type": "module",
   "keywords": [],
