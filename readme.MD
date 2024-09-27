@@ -7,8 +7,8 @@ Welcome to **Explore the Indian Cuisine**, an application that lets you dive int
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/explore-indian-cuisine.git
-cd explore-indian-cuisine
+git clone https://github.com/rahul72925/adapt-ready.git
+cd adapt-ready
 ```
 
 ### 2. Install Dependencies
